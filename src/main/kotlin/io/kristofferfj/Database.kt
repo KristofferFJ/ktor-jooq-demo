@@ -2,6 +2,7 @@ package io.kristofferfj
 
 import java.sql.Connection
 import java.sql.DriverManager
+import org.flywaydb.core.Flyway
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
@@ -16,5 +17,12 @@ object Database {
     fun connect(): DSLContext {
         val connection: Connection = DriverManager.getConnection(url, user, password)
         return DSL.using(connection, SQLDialect.POSTGRES)
+    }
+
+    fun migrateDatabase() {
+        Flyway.configure()
+            .dataSource(url, user, password)
+            .load()
+            .migrate()
     }
 }

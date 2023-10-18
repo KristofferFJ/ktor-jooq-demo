@@ -1,4 +1,4 @@
-package io.kristofferfj.boligmanager.company
+package io.kristofferfj.boligmanager.estate
 
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -10,24 +10,37 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 
-object CompanyApi {
+object EstateApi {
 
-    fun Route.company() {
-        route("/company") {
+    fun Route.estate() {
+        route("/estate") {
             post {
-                val companyInput = call.receive<String>()
-                val createdCompany = createCompany(companyInput)
-                call.respond(HttpStatusCode.OK, createdCompany)
+                val estateInput = call.receive<NewEstateInput>()
+                val createdEstate = createEstate(
+                    name = estateInput.name,
+                    companyId = estateInput.companyId,
+                )
+                call.respond(HttpStatusCode.OK, createdEstate)
             }
 
             get("all") {
-                call.respond(HttpStatusCode.OK, getCompanies())
+                call.respond(HttpStatusCode.OK, getEstates())
+            }
+
+            get("{id}") {
+                val id = call.parameters["id"]!!.toLong()
+                call.respond(HttpStatusCode.OK, getEstate(id))
             }
 
             delete("{id}") {
-                val id = call.parameters["id"]!!.toInt()
-                call.respond(HttpStatusCode.OK, deleteCompany(id))
+                val id = call.parameters["id"]!!.toLong()
+                call.respond(HttpStatusCode.OK, deleteEstate(id))
             }
         }
     }
+
+    data class NewEstateInput(
+        val name: String,
+        val companyId: Long,
+    )
 }

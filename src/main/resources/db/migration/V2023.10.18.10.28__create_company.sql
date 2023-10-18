@@ -1,5 +1,5 @@
 create table company
 (
-    id   serial primary key,
+    id   bigserial primary key,
     name text not null
 )

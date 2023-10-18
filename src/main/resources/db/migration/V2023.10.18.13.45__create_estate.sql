@@ -1,5 +1,6 @@
-create table company
+create table estate
 (
-    id   serial primary key,
-    name text not null
+    id   bigserial primary key,
+    name text not null,
+    company_id int8 not null references company(id)
 )

@@ -1,5 +1,8 @@
 package io.kristofferfj;
 
+import io.kristofferfj.boligmanager.account.AccountApi.account
+import io.kristofferfj.boligmanager.booking.BookingApi.booking
+import io.kristofferfj.boligmanager.booking_set.BookingSetApi.bookingSet
 import io.kristofferfj.boligmanager.company.CompanyApi.company
 import io.kristofferfj.boligmanager.estate.EstateApi.estate
 import io.ktor.application.Application
@@ -31,6 +34,9 @@ fun Application.module() {
     }
 
     routing {
+        account()
+        booking()
+        bookingSet()
         company()
         estate()
     }

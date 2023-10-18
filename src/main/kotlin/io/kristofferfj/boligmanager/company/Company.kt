@@ -18,7 +18,6 @@ fun createCompany(name: String): Company {
         .fetchOne()
         ?.getValue(COMPANY.ID)
 
-    // Check if ID is not null or handle error
     return Company(id = companyId!!, name = name)
 }
 

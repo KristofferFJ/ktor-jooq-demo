@@ -12,14 +12,11 @@ data class Account(
 )
 
 fun createAccount(name: String, number: Int, companyId: Long): Account {
-    val dsl = Database.connect()
-    val accountId = dsl.insertInto(ACCOUNT, ACCOUNT.NAME, ACCOUNT.NUMBER, ACCOUNT.COMPANY_ID)
+    return Database.connect().insertInto(ACCOUNT, ACCOUNT.NAME, ACCOUNT.NUMBER, ACCOUNT.COMPANY_ID)
         .values(name, number, companyId)
         .returning(ACCOUNT.ID)
-        .fetchOne()
-        ?.getValue(ACCOUNT.ID)
-
-    return Account(id = accountId!!, name = name, number = number, companyId = companyId)
+        .single()
+        .toAccount()
 }
 
 fun getAccounts(): List<Account> {

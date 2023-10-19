@@ -16,7 +16,16 @@ fun getBookings(): List<Booking> {
     return Database.connect().selectFrom(BOOKING).map { it.toBooking() }
 }
 
-private fun BookingRecord.toBooking(): Booking {
+fun createNewBooking(input: NewBookingInput): List<Booking> {
+    val bookingSetId = createBookingSet(companyId = input.companyId, estateId = input.estateId).id
+    return Database.connect().insertInto(BOOKING, BOOKING.BOOKING_SET_ID, BOOKING.AMOUNT, BOOKING.ACCOUNT_ID)
+        .values(bookingSetId, input.amount, input.debitAccountId)
+        .values(bookingSetId, input.amount.negate(), input.creditAccountId)
+        .returning()
+        .map { it.toBooking() }
+}
+
+fun BookingRecord.toBooking(): Booking {
     return Booking(
         this[BOOKING.ID],
         this[BOOKING.AMOUNT],
@@ -24,3 +33,11 @@ private fun BookingRecord.toBooking(): Booking {
         this[BOOKING.ACCOUNT_ID],
     )
 }
+
+data class NewBookingInput(
+    val amount: BigDecimal,
+    val debitAccountId: Long,
+    val creditAccountId: Long,
+    val companyId: Long?,
+    val estateId: Long?,
+)

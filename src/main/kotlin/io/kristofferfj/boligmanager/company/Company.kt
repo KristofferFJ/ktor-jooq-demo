@@ -11,14 +11,11 @@ data class Company(
 )
 
 fun createCompany(name: String): Company {
-    val dsl = Database.connect()
-    val companyId = dsl.insertInto(COMPANY, COMPANY.NAME)
+    return Database.connect().insertInto(COMPANY, COMPANY.NAME)
         .values(name)
         .returning(COMPANY.ID)
-        .fetchOne()
-        ?.getValue(COMPANY.ID)
-
-    return Company(id = companyId!!, name = name)
+        .single()
+        .toCompany()
 }
 
 fun getCompanies(): List<Company> {

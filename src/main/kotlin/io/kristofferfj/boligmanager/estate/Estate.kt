@@ -11,14 +11,11 @@ data class Estate(
 )
 
 fun createEstate(name: String, companyId: Long): Estate {
-    val dsl = Database.connect()
-    val estateId = dsl.insertInto(ESTATE, ESTATE.NAME, ESTATE.COMPANY_ID)
+    return Database.connect().insertInto(ESTATE, ESTATE.NAME, ESTATE.COMPANY_ID)
         .values(name, companyId)
-        .returning(ESTATE.ID)
-        .fetchOne()
-        ?.getValue(ESTATE.ID)
-
-    return Estate(id = estateId!!, name = name, companyId = companyId)
+        .returning()
+        .single()
+        .toEstate()
 }
 
 fun getEstate(id: Long): Estate {

@@ -1,8 +1,9 @@
 package io.kristofferfj;
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.kristofferfj.boligmanager.account.AccountApi.account
 import io.kristofferfj.boligmanager.booking.BookingApi.booking
-import io.kristofferfj.boligmanager.booking_set.BookingSetApi.bookingSet
 import io.kristofferfj.boligmanager.company.CompanyApi.company
 import io.kristofferfj.boligmanager.estate.EstateApi.estate
 import io.ktor.application.Application
@@ -19,12 +20,15 @@ import io.ktor.server.netty.Netty
 
 fun main() {
     //migrateDatabase()
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+    embeddedServer(Netty, port = 314, module = Application::module).start(wait = true)
 }
 
 fun Application.module() {
     install(ContentNegotiation) {
-        jackson { }
+        jackson {
+            registerModule(JavaTimeModule())
+            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        }
     }
 
     install(StatusPages) {
@@ -36,7 +40,6 @@ fun Application.module() {
     routing {
         account()
         booking()
-        bookingSet()
         company()
         estate()
     }

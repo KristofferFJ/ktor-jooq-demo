@@ -14,16 +14,26 @@ import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
 import io.ktor.response.respondText
+import io.ktor.routing.get
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
 fun main() {
-    //migrateDatabase()
     embeddedServer(Netty, port = 314, module = Application::module).start(wait = true)
 }
 
 fun Application.module() {
+    install(StatusPages) {
+        exception<IllegalStateException> { cause ->
+            call.respondText(cause.localizedMessage, status = HttpStatusCode.BadRequest)
+        }
+        exception<Throwable> { cause ->
+            call.respondText(cause.localizedMessage, status = HttpStatusCode.InternalServerError)
+        }
+    }
+
     install(ContentNegotiation) {
         jackson {
             registerModule(JavaTimeModule())
@@ -31,13 +41,13 @@ fun Application.module() {
         }
     }
 
-    install(StatusPages) {
-        exception<Throwable> { cause ->
-            call.respondText(cause.localizedMessage, status = HttpStatusCode.InternalServerError)
-        }
-    }
-
     routing {
+        route("/") {
+            get {
+                call.respondText("Hello, world!")
+            }
+        }
+
         account()
         booking()
         company()

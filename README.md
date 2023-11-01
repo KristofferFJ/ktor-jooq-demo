@@ -13,3 +13,7 @@ Something about Ktor asynchronous?
 ## Further ideas
 jOOQ also integrates well with Spring: 
 https://www.sivalabs.in/spring-boot-jooq-tutorial-fetching-one-to-one-associations/
+
+Kan Ktor klare f.eks. LocalDate som input?
+
+jOOQ forskellige versioner

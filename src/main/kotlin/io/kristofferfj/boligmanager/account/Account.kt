@@ -1,6 +1,6 @@
 package io.kristofferfj.boligmanager.account
 
-import io.kristofferfj.Database
+import io.kristofferfj.Database.getDslContext
 import io.kristofferfj.jooq.public_.tables.Account.ACCOUNT
 import io.kristofferfj.jooq.public_.tables.records.AccountRecord
 
@@ -12,23 +12,23 @@ data class Account(
 )
 
 fun createAccount(name: String, number: Int, companyId: Long): Account {
-    return Database.connect().insertInto(ACCOUNT, ACCOUNT.NAME, ACCOUNT.NUMBER, ACCOUNT.COMPANY_ID)
+    return getDslContext().insertInto(ACCOUNT, ACCOUNT.NAME, ACCOUNT.NUMBER, ACCOUNT.COMPANY_ID)
         .values(name, number, companyId)
-        .returning(ACCOUNT.ID)
+        .returning()
         .single()
         .toAccount()
 }
 
 fun getAccounts(): List<Account> {
-    return Database.connect().selectFrom(ACCOUNT).map { it.toAccount() }
+    return getDslContext().selectFrom(ACCOUNT).map { it.toAccount() }
 }
 
 fun getAccount(id: Long): Account {
-    return Database.connect().selectFrom(ACCOUNT).where(ACCOUNT.ID.eq(id)).single().toAccount()
+    return getDslContext().selectFrom(ACCOUNT).where(ACCOUNT.ID.eq(id)).single().toAccount()
 }
 
 fun deleteAccount(accountId: Long): Boolean {
-    return Database.connect().deleteFrom(ACCOUNT)
+    return getDslContext().deleteFrom(ACCOUNT)
         .where(ACCOUNT.ID.eq(accountId))
         .execute() > 0
 }

@@ -9,20 +9,26 @@ import org.jooq.impl.DSL
 
 object Database {
 
-    // Update these parameters according to your database setup
-    private const val url = "jdbc:postgresql://localhost:5432/ktor_jooq"
-    private const val user = "myuser"
-    private const val password = "mypass"
+    private const val URL = "jdbc:postgresql://localhost:5432/ktor_jooq"
+    private const val USER = "myuser"
+    private const val PASSWORD = "mypass"
+    private val dslContext = connect()
+
+    fun getDslContext(): DSLContext {
+        return this.dslContext
+    }
 
     fun connect(): DSLContext {
-        val connection: Connection = DriverManager.getConnection(url, user, password)
+        val connection: Connection = DriverManager.getConnection(URL, USER, PASSWORD)
         return DSL.using(connection, SQLDialect.POSTGRES)
     }
 
-    fun migrateDatabase() {
-        Flyway.configure()
-            .dataSource(url, user, password)
+    fun cleanMigrate() {
+        val flyway = Flyway.configure()
+            .dataSource(URL, USER, PASSWORD)
+            .cleanDisabled(false)
             .load()
-            .migrate()
+        flyway.clean()
+        flyway.migrate()
     }
 }

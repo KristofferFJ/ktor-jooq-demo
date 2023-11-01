@@ -9,6 +9,7 @@ import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
+import java.time.LocalDate
 
 object EstateApi {
 
@@ -19,6 +20,7 @@ object EstateApi {
                 val createdEstate = createEstate(
                     name = estateInput.name,
                     companyId = estateInput.companyId,
+                    someDate = estateInput.someDate,
                 )
                 call.respond(HttpStatusCode.OK, createdEstate)
             }
@@ -42,5 +44,6 @@ object EstateApi {
     data class NewEstateInput(
         val name: String,
         val companyId: Long,
+        val someDate: LocalDate,
     )
 }

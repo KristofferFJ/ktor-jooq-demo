@@ -8,6 +8,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
+import java.math.BigDecimal
 
 object BookingApi {
 
@@ -28,3 +29,11 @@ object BookingApi {
         }
     }
 }
+
+data class NewBookingInput(
+    val amount: BigDecimal,
+    val debitAccountId: Long,
+    val creditAccountId: Long,
+    val companyId: Long? = null,
+    val estateId: Long? = null ,
+)

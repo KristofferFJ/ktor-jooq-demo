@@ -5,6 +5,7 @@ import io.kristofferfj.jooq.public_.tables.Booking.BOOKING
 import io.kristofferfj.jooq.public_.tables.BookingSet.BOOKING_SET
 import io.kristofferfj.jooq.public_.tables.records.BookingSetRecord
 import java.time.LocalDateTime
+import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Records.mapping
 import org.jooq.impl.DSL.field
@@ -14,8 +15,8 @@ import org.jooq.impl.DSL.selectFrom
 data class BookingSet(
     val id: Long,
     val createdAt: LocalDateTime,
-    val estateId: Long?,
-    val companyId: Long?,
+    val estateId: Long? = null,
+    val companyId: Long? = null,
 )
 
 data class BookingSetAndBooking(
@@ -28,23 +29,36 @@ data class BookingSetAndBooking(
 
 fun createBookingSet(estateId: Long?, companyId: Long?): BookingSet {
     check((estateId == null) != (companyId == null)) { "Exactly 1 of estateId or companyId must be not-null" }
-    return Database.connect().insertInto(
+    return Database.getDslContext().insertInto(
         BOOKING_SET,
         BOOKING_SET.COMPANY_ID,
         BOOKING_SET.ESTATE_ID,
         BOOKING_SET.CREATED_AT,
     ).values(companyId, estateId, LocalDateTime.now())
-        .returning(BOOKING_SET.ID)
+        .returning()
+        .single()
+        .toBookingSet()
+}
+
+fun createBookingSet(estateId: Long?, companyId: Long?, dslContext: DSLContext): BookingSet {
+    check((estateId == null) != (companyId == null)) { "Exactly 1 of estateId or companyId must be not-null" }
+    return dslContext.insertInto(
+        BOOKING_SET,
+        BOOKING_SET.COMPANY_ID,
+        BOOKING_SET.ESTATE_ID,
+        BOOKING_SET.CREATED_AT,
+    ).values(companyId, estateId, LocalDateTime.now())
+        .returning()
         .single()
         .toBookingSet()
 }
 
 fun getBookingSets(): List<BookingSet> {
-    return Database.connect().selectFrom(BOOKING_SET).map { it.toBookingSet() }
+    return Database.getDslContext().selectFrom(BOOKING_SET).map { it.toBookingSet() }
 }
 
 fun getBookingSetsAndBookings(id: Long): BookingSetAndBooking {
-    return Database.connect().select(
+    return Database.getDslContext().select(
         BOOKING_SET.ID,
         BOOKING_SET.CREATED_AT,
         BOOKING_SET.ESTATE_ID,
